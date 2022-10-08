@@ -86,7 +86,10 @@ def postpictureinchannel(listwithdates):
     # Открываем картинку для постинга
     photo = open(picpath, 'rb')
     # Отправляем картинку в канал
-    bot.send_photo(channel_id, photo, caption=channelname)
+    try:
+        bot.send_photo(channel_id, photo, caption=channelname)
+    except Exception as exception:
+        print("Произошла ошибка.\n\t", exception)
 
     print("Размер listwithdates: ", len(listwithdates))
     # Проверка на наличие оставшихся элементов
@@ -96,6 +99,7 @@ def postpictureinchannel(listwithdates):
         times.insertDatesOnDay = datetime.time(0, 0, 1).strftime("%H:%M:%S")
         nulltime = datetime.time(23, 0).strftime("%H:%M")
         print("На сегодня картинки кончились.")
+
     else:
         # Удаление первой строки
         listwithdates.pop(0)
@@ -106,7 +110,7 @@ def postpictureinchannel(listwithdates):
 # Переменная где хранится список из базы данных
 listwithdates = []
 
-# Функция
+# Функция для выбора действия
 def switcher(argument):
     global listwithdates
     match argument:
