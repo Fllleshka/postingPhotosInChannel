@@ -68,11 +68,8 @@ def datesfromtable():
 
 # Класс времена, используется для запуска событий по определённому времени
 class times:
-    #insertDatesOnDay = datetime.datetime.today().strftime("%H:%M:%S")
-    #printPhoto = (datetime.datetime.today() + timedelta(seconds=5)).strftime("%H:%M:%S")
-
-    printPhoto = (datetime.datetime.today() + timedelta(seconds=5)).strftime("%H:%M:%S")
-    insertDatesOnDay = (datetime.datetime.today() + timedelta(seconds=20)).strftime("%H:%M:%S")
+    printPhoto = (datetime.datetime.today() + timedelta(seconds=15)).strftime("%H:%M:%S")
+    insertDatesOnDay = datetime.time(0, 0, 1).strftime("%H:%M:%S")
 
 # Токен для связи с ботом
 bot = telebot.TeleBot(botkey)
@@ -87,7 +84,7 @@ def postpictureinchannel(listwithdates):
     photo = open(picpath, 'rb')
     # Отправляем картинку в канал
     try:
-        bot.send_photo(channel_id, photo, caption=channelname)
+        bot.send_photo(channel_id, photo, caption = channelname)
     except Exception as exception:
         print("Произошла ошибка.\n\t", exception)
 
@@ -107,6 +104,27 @@ def postpictureinchannel(listwithdates):
         times.printPhoto = str(listwithdates[0][2])[11:]
         print("=========> Новое время постинга: ", times.printPhoto)
 
+# Функция выяснения с какая фотография постится следующей
+def searchnextphoto():
+    global listwithdates
+    # Достаём фаилы за сегодня из базы данных
+    dates = datesfromtable()
+    # Получаем дату и время сейчас
+    timenow = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+
+    elementsfordelete = 0
+    for element in dates:
+        if element[2] < timenow:
+            elementsfordelete = elementsfordelete + 1
+    elem = 0
+    while (elem < elementsfordelete):
+        del dates[0]
+        elem = elem + 1
+
+    listwithdates = dates
+    times.printPhoto = str(dates[0][2])[11:]
+    print("=========> Новое время постинга: ", times.printPhoto)
+
 # Переменная где хранится список из базы данных
 listwithdates = []
 
@@ -116,7 +134,7 @@ def switcher(argument):
     match argument:
         case times.insertDatesOnDay:
             print("Данные на сегодня:")
-            listwithdates = datesfromtable()
+            #listwithdates = datesfromtable()
             for element in listwithdates:
                 print("\t\t", element)
             # Формирование времени постинга первой картинки
@@ -139,11 +157,15 @@ def eternalcycle():
 
 # Проверям наличие базы данных. Если база данных есть, то подключаемся, если нет, то создаём новую
 # Путь до Базы Данных
-pathdb = 'database/DataBase.db'
+pathdb = 'database\DataBase.db'
 # Результат проверки наличия базы данных
 result = os.path.exists(pathdb)
 # Если база данных есть
 if result is True:
+    print("База данных есть. Поэтому запускаем функции для определения следующей картинки для постинга.")
+    # Выясняем какая фотография должна поститься следующей
+    searchnextphoto()
+    # Запускаем вечный цикл обработки событий
     eternalcycle()
 # Если базы данных нет, то инициализируем её и вставляем данные
 else:
