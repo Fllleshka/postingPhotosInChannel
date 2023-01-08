@@ -94,9 +94,7 @@ def postpictureinchannel(listwithdates):
         # Удаление первой строки
         listwithdates.pop(0)
         times.insertDatesOnDay = datetime.time(0, 0, 1).strftime("%H:%M:%S")
-        nulltime = datetime.time(23, 0).strftime("%H:%M")
         print("На сегодня картинки кончились.")
-
     else:
         # Удаление первой строки
         listwithdates.pop(0)
@@ -134,7 +132,7 @@ def switcher(argument):
     match argument:
         case times.insertDatesOnDay:
             print("Данные на сегодня:")
-            #listwithdates = datesfromtable()
+            listwithdates = datesfromtable()
             for element in listwithdates:
                 print("\t\t", element)
             # Формирование времени постинга первой картинки
