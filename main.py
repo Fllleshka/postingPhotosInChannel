@@ -37,6 +37,7 @@ def importphotos():
 
     # Импортируем картинки из папок
     files = os.listdir("database/photos/")
+    print(files)
     files.sort()
     # Создаём переменные для показывания процентов
     i = 0
@@ -77,7 +78,7 @@ bot = telebot.TeleBot(botkey)
 def postpictureinchannel(listwithdates):
     # Данные для постинга
     date = listwithdates[0][1]
-    print("Фотография с именем фаила \n\t", date, "\nВ канал: \n\t", channelname)
+    print("Фотография с именем файла \n\t", date, "\nВ канал: \n\t", channelname)
     # Путь к картинке
     picpath = "database/photos/" + date
     # Открываем картинку для постинга
@@ -120,8 +121,11 @@ def searchnextphoto():
         elem = elem + 1
 
     listwithdates = dates
-    times.printPhoto = str(dates[0][2])[11:]
-    print("=========> Новое время постинга: ", times.printPhoto)
+    if len(dates) == 0:
+        print("Файлов в папке нет")
+    else:
+        times.printPhoto = str(dates[0][2])[11:]
+        print("=========> Новое время постинга: ", times.printPhoto)
 
 # Переменная где хранится список из базы данных
 listwithdates = []
@@ -140,6 +144,7 @@ def switcher(argument):
             print("First time to posting: ", times.printPhoto)
         case times.printPhoto:
             print("Запуск функции постинга картинок.")
+            print(listwithdates)
             postpictureinchannel(listwithdates)
         case _:
             print(argument)
