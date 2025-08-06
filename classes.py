@@ -4,10 +4,11 @@ import datetime
 import random
 import time
 import telebot
-
 import tqdm
-from dates import botkey, namechannel, idchannel
 from times import times
+from threading import Thread
+
+from dates import botkey, namechannel, idchannel
 
 class database:
     def __init__(self):
@@ -156,7 +157,15 @@ class work(database):
         con = sqlite3.connect(self.pathdatabase)
         today = datetime.datetime.today()
         todayday = today.strftime("%Y-%m-%d")
-        starttime = todayday + " 00:00:01"
+        print(times.insertDatesOnDay)
+        print(datetime.time(0, 0, 1).strftime("%H:%M:%S"))
+        print(times.insertDatesOnDay != datetime.time(0, 0, 1).strftime("%H:%M:%S"))
+
+        if times.insertDatesOnDay != datetime.time(0, 0, 1).strftime("%H:%M:%S"):
+            starttime = today.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            starttime = todayday + " 00:00:01"
+
         endtime = todayday + " 23:59:59"
         # Запрос к базе данных на формирование данных по всем запланированным постам на сегодня
         query = (("SELECT * FROM IMAGES WHERE time_to_post >= '") +
@@ -180,9 +189,12 @@ class work(database):
                 # Формирование времени постинга первой картинки
                 times.printPhoto = str(self.listdatesonday[0][2])[11:]
                 print("Первое время для постинга: ", times.printPhoto)
+                # Приведение времени импорта в соответствие
+                times.insertDatesOnDay = datetime.time(0, 0, 1).strftime("%H:%M:%S")
             case times.printPhoto:
                 print("Запуск функции постинга картинок.")
-                self.postpictureinchannel()
+                thread = Thread(target = self.postpictureinchannel)
+                thread.start()
             case _:
                 print(argument)
 
