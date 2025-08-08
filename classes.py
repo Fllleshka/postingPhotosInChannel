@@ -149,7 +149,7 @@ class work(database):
             today = datetime.datetime.today()
             todaytime = today.strftime("%H:%M:%S")
             self.switcher(todaytime)
-            time.sleep(0.5)
+            time.sleep(1)
 
     # Функция импорт данных из таблицы
     def detesfromtable(self):
